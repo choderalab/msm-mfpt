@@ -42,12 +42,12 @@ def score(featurized_trajs, split, tica_lag, tica_dim, microstate_number, msm_la
         Y_commute = tica_commute.get_output()
         Y_commute = [traj[:,:tica_dim] for traj in Y_commute]
 
-    kmeans_kinetic = pyemma.coordinates.cluster_kmeans(Y_kinetic, k=microstate_number, max_iter=1000, n_jobs=1)
+    kmeans_kinetic = pyemma.coordinates.cluster_kmeans(Y_kinetic, k=microstate_number, max_iter=1000, n_jobs=1, stride=2)
     dtrajs_kinetic = kmeans_kinetic.dtrajs
     dtrajs_kinetic_train = list(np.array(dtrajs_kinetic)[split[0]])
     dtrajs_kinetic_test = list(np.array(dtrajs_kinetic)[split[1]])
 
-    kmeans_commute = pyemma.coordinates.cluster_kmeans(Y_commute, k=microstate_number, max_iter=1000, n_jobs=1)
+    kmeans_commute = pyemma.coordinates.cluster_kmeans(Y_commute, k=microstate_number, max_iter=1000, n_jobs=1, stride=2)
     dtrajs_commute = kmeans_commute.dtrajs
     dtrajs_commute_train = list(np.array(dtrajs_commute)[split[0]])
     dtrajs_commute_test = list(np.array(dtrajs_commute)[split[1]])

@@ -10,8 +10,7 @@ pdb_file = "villin.pdb"
 
 features = pyemma.coordinates.featurizer(pdb_file)
 features.add_residue_mindist()
-source = pyemma.coordinates.source(traj_files, features=features, chunk_size=10000)
-X = source.get_output()
+X = pyemma.coordinates.load(traj_files, features=features, stride=50)
 
 splits = np.load('splits.npy')
 
@@ -144,7 +143,9 @@ def score_multiprocess(featurized_trajs, splits, tica_lags, tica_dims, microstat
     return [parameters_return, scores]
 
 # prepare the parameter choices - use msm_lag = 50 (50 x 0.2 ns/frame = 10 ns), score_k = 5
-tica_lags = [5,25,50]
+# data strided by 50 frames - lag time 1
+tica_lags = [1]
+#tica_lags = [5,25,50]
 #tica_lags = [50]
 tica_dims = ['95p'] + [2,10,50,100,300,500]
 #tica_dims = ['95p', 2]
@@ -152,6 +153,7 @@ microstate_numbers = [5,10,50,100,200,400,600,800,1000]
 #microstate_numbers = [5,10,50,100]
 #microstate_numbers = [5,10,50] + list(np.arange(100,1100,100))
 
-scores = score_multiprocess(X, splits, tica_lags, tica_dims, microstate_numbers, 50, 32)
+# data strided by 50 frames - lag time 1
+scores = score_multiprocess(X, splits, tica_lags, tica_dims, microstate_numbers, 1, 32)
 
 np.save('scores_msmlag10ns_splitkmeans', scores)
